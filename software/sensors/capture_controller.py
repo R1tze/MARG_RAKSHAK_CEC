@@ -8,12 +8,15 @@ class CaptureController:
     and condensate collection process.
     """
 
-    def __init__(self):
+    def __init__(self, target_volume=50, peltier_power=70):
         self.peltier = PeltierController()
-        self.collector = CondensateCollector(target_volume=50)
+        self.collector = CondensateCollector(
+            target_volume=target_volume
+        )
+        self.peltier_power = peltier_power
 
     def start_capture(self):
-        self.peltier.start(70)
+        self.peltier.start(self.peltier_power)
 
     def add_condensate(self, amount):
         if self.peltier.enabled:

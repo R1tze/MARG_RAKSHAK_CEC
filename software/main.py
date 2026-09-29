@@ -6,9 +6,12 @@ from sensors.sample_gate import is_valid_sample
 from sensors.bme688_array import BME688Array
 from sensors.voc_processing import extract_voc_features
 from sensors.sht40 import SHT40Simulator
+
 from db.database import DatabaseLogger
+
 from ui.display import show_result
 from ui.tft_display import TFTDisplay
+
 from config_loader import load_config
 
 import numpy as np
@@ -21,19 +24,32 @@ from fusion.fusion import fuse_results
 
 
 def main():
+
+    # Load configuration first
+    config = load_config()
+
+    # Sensors
     co2_sensor = SCD41Simulator()
     airflow_sensor = AirflowSimulator()
     voc_sensor = BME688Array()
     sht40_sensor = SHT40Simulator()
-    capture = CaptureController()
 
+    # Capture system using configuration
+    capture = CaptureController(
+        target_volume=config["condensate"]["target_volume_uL"],
+        peltier_power=config["peltier"]["default_power_percent"]
+    )
+
+    # Rodeostat
     rodeostat = RodeostatSimulator()
     rodeostat.connect()
 
+    # Database
     database = DatabaseLogger()
+
+    # Display
     display = TFTDisplay()
     display.show_startup()
-    config = load_config()
 
     print("MARG RAKSHAK")
     print("============")
@@ -49,12 +65,12 @@ def main():
         pressure = airflow_sensor.read_pressure()
         airflow = pressure_to_airflow(pressure)
 
-        # Breath validity
+        # Breath validity using configuration
         valid_sample = is_valid_sample(
-        co2,
-        airflow,
-        co2_threshold=config["breath_validation"]["co2_threshold_ppm"],
-        airflow_threshold=config["breath_validation"]["airflow_threshold"]
+            co2,
+            airflow,
+            co2_threshold=config["breath_validation"]["co2_threshold_ppm"],
+            airflow_threshold=config["breath_validation"]["airflow_threshold"]
         )
 
         # BME688 array
@@ -114,7 +130,11 @@ def main():
                 display.show_sample_status("READY")
 
                 # Rodeostat DPV sweep
-                potential, current = rodeostat.run_dpv()
+                potential, current = rodeostat.run_dpv(
+                    potential_start=config["rodeostat"]["potential_start"],
+                    potential_end=config["rodeostat"]["potential_end"],
+                    points=config["rodeostat"]["points"]
+                )
 
                 # Process DPV
                 dpv_result = process_dpv(
@@ -137,29 +157,33 @@ def main():
                         peak_index
                     ]
 
+                    # DPV decision using configuration
                     decision = classify_signal(
-    peak_current,
-    lod=config["dpv"]["lod"],
-    loq=config["dpv"]["loq"]
-)
+                        peak_current,
+                        lod=config["dpv"]["lod"],
+                        loq=config["dpv"]["loq"]
+                    )
 
                     # Demo VOC support signal
                     voc_signal = True
 
-                    # Fuse DPV + VOC results
+                    # Fuse DPV + VOC
                     final_result = fuse_results(
                         decision,
                         voc_signal
                     )
+
+                    # Display result
                     display.show_result(final_result)
+
                     show_result(
-    breath_status="VALID",
-    sample_status="READY",
-    peak_potential=peak_potential,
-    peak_current=peak_current,
-    dpv_decision=decision,
-    final_result=final_result
-)
+                        breath_status="VALID",
+                        sample_status="READY",
+                        peak_potential=peak_potential,
+                        peak_current=peak_current,
+                        dpv_decision=decision,
+                        final_result=final_result
+                    )
 
                     print(
                         f"DPV peak potential: "
@@ -179,7 +203,7 @@ def main():
                         f"Final result: {final_result}"
                     )
 
-                    # Save result to SQLite database
+                    # Save result
                     database.log_result(
                         co2=co2,
                         airflow=airflow,
