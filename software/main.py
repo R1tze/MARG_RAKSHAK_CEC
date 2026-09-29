@@ -4,7 +4,10 @@ from sensors.airflow import AirflowSimulator
 from sensors.airflow_processing import pressure_to_airflow
 from sensors.sample_gate import is_valid_sample
 from sensors.bme688_array import BME688Array
-from sensors.voc_processing import extract_voc_features
+from sensors.voc_processing import (
+    extract_voc_features,
+    calculate_voc_signal
+)
 from sensors.sht40 import SHT40Simulator
 
 from db.database import DatabaseLogger
@@ -166,7 +169,11 @@ def main():
                     )
 
                     # Demo VOC support signal
-                    voc_signal = True
+                    # Calculate VOC support from both BME688 sensors
+                    voc_signal = calculate_voc_signal(
+    voc_features_1,
+    voc_features_2
+)
 
                     # Fuse DPV + VOC
                     final_result = fuse_results(

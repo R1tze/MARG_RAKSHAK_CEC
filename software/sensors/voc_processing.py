@@ -1,31 +1,31 @@
 def extract_voc_features(sensor_data):
     """
-    Extract useful features from BME688 data.
-
-    These are software features for development.
-    They are not drug-specific signatures.
+    Extract useful VOC-related features from a BME688 reading.
     """
 
     return {
         "temperature": sensor_data["temperature"],
         "humidity": sensor_data["humidity"],
         "pressure": sensor_data["pressure"],
-        "gas_resistance": sensor_data["gas_resistance"],
+        "gas_resistance": sensor_data["gas_resistance"]
     }
 
 
-if __name__ == "__main__":
-    test_data = {
-        "temperature": 31.28,
-        "humidity": 48.44,
-        "pressure": 991.37,
-        "gas_resistance": 47137.37,
-    }
+def calculate_voc_signal(sensor_1_features, sensor_2_features):
+    """
+    Demo VOC support decision based on gas resistance.
 
-    features = extract_voc_features(test_data)
+    This is a development/demo rule only.
+    It is NOT a validated drug-identification method.
+    """
 
-    print("MARG RAKSHAK - VOC FEATURE TEST")
-    print("--------------------------------")
+    gas_1 = sensor_1_features["gas_resistance"]
+    gas_2 = sensor_2_features["gas_resistance"]
 
-    for name, value in features.items():
-        print(f"{name}: {value}")
+    average_gas_resistance = (gas_1 + gas_2) / 2
+
+    # Demo threshold only; must be experimentally calibrated.
+    if average_gas_resistance < 100000:
+        return True
+
+    return False

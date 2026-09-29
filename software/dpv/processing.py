@@ -3,9 +3,6 @@ from scipy.signal import savgol_filter, find_peaks
 
 
 def smooth_signal(current, window_length=11, polyorder=3):
-    """
-    Smooth a DPV current signal using Savitzky-Golay filtering.
-    """
     current = np.asarray(current, dtype=float)
 
     if len(current) < window_length:
@@ -19,10 +16,6 @@ def smooth_signal(current, window_length=11, polyorder=3):
 
 
 def find_dpv_peaks(potential, current, prominence=0.01):
-    """
-    Find peaks in a DPV signal.
-    Returns peak locations and peak currents.
-    """
     potential = np.asarray(potential, dtype=float)
     current = np.asarray(current, dtype=float)
 
@@ -35,9 +28,6 @@ def find_dpv_peaks(potential, current, prominence=0.01):
 
 
 def process_dpv(potential, current):
-    """
-    Complete basic DPV processing pipeline.
-    """
     smoothed = smooth_signal(current)
 
     peak_potential, peak_current = find_dpv_peaks(
