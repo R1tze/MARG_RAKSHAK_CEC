@@ -25,7 +25,7 @@ from fusion.fusion import fuse_results
 
 def main():
 
-    # Load configuration first
+    # Load configuration
     config = load_config()
 
     # Sensors
@@ -65,7 +65,7 @@ def main():
         pressure = airflow_sensor.read_pressure()
         airflow = pressure_to_airflow(pressure)
 
-        # Breath validity using configuration
+        # Breath validity
         valid_sample = is_valid_sample(
             co2,
             airflow,
@@ -121,8 +121,9 @@ def main():
             capture.start_capture()
 
             # Simulated condensate collection
-            capture.add_condensate(20)
-            capture.add_condensate(30)
+            capture.add_condensate(
+                config["condensate"]["target_volume_uL"]
+            )
 
             if capture.is_ready():
 
@@ -157,7 +158,7 @@ def main():
                         peak_index
                     ]
 
-                    # DPV decision using configuration
+                    # DPV decision
                     decision = classify_signal(
                         peak_current,
                         lod=config["dpv"]["lod"],
