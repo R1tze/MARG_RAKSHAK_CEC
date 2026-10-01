@@ -184,9 +184,10 @@ def main():
 
                     # Fuse DPV + VOC
                     final_result = fuse_results(
-                        decision,
-                        voc_signal
-                    )
+    decision,
+    voc_signal,
+    sample_valid=valid_sample
+)
 
                     # Display result
                     display.show_result(final_result)

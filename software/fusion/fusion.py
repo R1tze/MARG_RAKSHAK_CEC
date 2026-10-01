@@ -1,21 +1,28 @@
-def fuse_results(dpv_decision, voc_signal):
+def fuse_results(dpv_decision, voc_signal, sample_valid=True):
     """
     Combine DPV and VOC results.
 
-    voc_signal:
-        True  = VOC sensors show a supporting response
-        False = VOC sensors do not show a supporting response
+    This is development/demo fusion logic.
+    It is NOT a validated drug-identification model.
 
-    This is demo fusion logic.
-    It is not a validated drug-identification model.
+    sample_valid:
+        True  = breath/sample passed validity checks
+        False = sample is invalid or insufficient
     """
 
-    if dpv_decision == "PRESUMPTIVE POSITIVE" and voc_signal:
-        return "PRESUMPTIVE POSITIVE"
+    # Never classify an invalid sample as negative.
+    if not sample_valid:
+        return "INCONCLUSIVE"
 
+    # Both channels support the result.
+    if dpv_decision == "PRESUMPTIVE POSITIVE" and voc_signal:
+        return "POSITIVE"
+
+    # Both channels support a negative result.
     if dpv_decision == "NEGATIVE" and not voc_signal:
         return "NEGATIVE"
 
+    # Any disagreement between channels.
     return "INCONCLUSIVE"
 
 
@@ -25,8 +32,9 @@ if __name__ == "__main__":
     print("--------------------------")
 
     result = fuse_results(
-        "PRESUMPTIVE POSITIVE",
-        True
+        dpv_decision="PRESUMPTIVE POSITIVE",
+        voc_signal=True,
+        sample_valid=True
     )
 
     print(f"Final result: {result}")
