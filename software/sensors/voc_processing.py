@@ -11,7 +11,11 @@ def extract_voc_features(sensor_data):
     }
 
 
-def calculate_voc_signal(sensor_1_features, sensor_2_features):
+def calculate_voc_signal(
+    sensor_1_features,
+    sensor_2_features,
+    gas_resistance_threshold=100000
+):
     """
     Demo VOC support decision based on gas resistance.
 
@@ -24,8 +28,7 @@ def calculate_voc_signal(sensor_1_features, sensor_2_features):
 
     average_gas_resistance = (gas_1 + gas_2) / 2
 
-    # Demo threshold only; must be experimentally calibrated.
-    if average_gas_resistance < 100000:
+    if average_gas_resistance < gas_resistance_threshold:
         return True
 
     return False

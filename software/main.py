@@ -172,7 +172,8 @@ def main():
                     # Calculate VOC support from both BME688 sensors
                     voc_signal = calculate_voc_signal(
     voc_features_1,
-    voc_features_2
+    voc_features_2,
+    gas_resistance_threshold=config["voc"]["gas_resistance_threshold_ohms"]
 )
 
                     # Fuse DPV + VOC

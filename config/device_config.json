@@ -13,6 +13,9 @@
     "peltier": {
         "default_power_percent": 70
     },
+    "voc": {
+    "gas_resistance_threshold_ohms": 100000
+    },
     "rodeostat": {
         "potential_start": 0.0,
         "potential_end": 0.5,
