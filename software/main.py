@@ -6,7 +6,8 @@ from sensors.sample_gate import is_valid_sample
 from sensors.bme688_array import BME688Array
 from sensors.voc_processing import (
     extract_voc_features,
-    calculate_voc_signal
+    calculate_voc_signal,
+    calculate_voc_response
 )
 from sensors.sht40 import SHT40Simulator
 
@@ -86,6 +87,10 @@ def main():
         voc_features_2 = extract_voc_features(
             voc_array["sensor_2"]
         )
+        voc_response = calculate_voc_response(
+    voc_features_1,
+    voc_features_2
+)
 
         # SHT40
         sht40_data = sht40_sensor.read()
@@ -107,6 +112,7 @@ def main():
         print(f"Humidity: {voc_features_2['humidity']} %")
         print(f"Pressure: {voc_features_2['pressure']} hPa")
         print(f"Gas resistance: {voc_features_2['gas_resistance']} Ω")
+        print(f"VOC response difference: {voc_response:.2f} Ω")
 
         print()
         print("SHT40:")
