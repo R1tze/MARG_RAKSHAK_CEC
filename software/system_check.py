@@ -19,58 +19,97 @@ def main():
 
     checks = []
 
+    # SCD41 CO2
     try:
-        SCD41Simulator()
-        checks.append(("SCD41 CO2", "OK"))
+        sensor = SCD41Simulator()
+        co2 = sensor.read_co2()
+
+        if co2 >= 0:
+            checks.append(("SCD41 CO2", "OK"))
+        else:
+            checks.append(("SCD41 CO2", "FAILED"))
+
     except Exception:
         checks.append(("SCD41 CO2", "FAILED"))
 
+    # Airflow
     try:
-        AirflowSimulator()
-        checks.append(("Airflow", "OK"))
+        sensor = AirflowSimulator()
+        pressure = sensor.read_pressure()
+
+        if isinstance(pressure, (int, float)):
+            checks.append(("Airflow", "OK"))
+        else:
+            checks.append(("Airflow", "FAILED"))
+
     except Exception:
         checks.append(("Airflow", "FAILED"))
 
+    # BME688
     try:
-        BME688Array()
-        checks.append(("BME688 Array", "OK"))
+        sensor = BME688Array()
+        data = sensor.read()
+
+        if data:
+            checks.append(("BME688 Array", "OK"))
+        else:
+            checks.append(("BME688 Array", "FAILED"))
+
     except Exception:
         checks.append(("BME688 Array", "FAILED"))
 
+    # SHT40
     try:
-        SHT40Simulator()
-        checks.append(("SHT40", "OK"))
+        sensor = SHT40Simulator()
+        data = sensor.read()
+
+        if data:
+            checks.append(("SHT40", "OK"))
+        else:
+            checks.append(("SHT40", "FAILED"))
+
     except Exception:
         checks.append(("SHT40", "FAILED"))
 
+    # Peltier / Capture
     try:
         CaptureController()
         checks.append(("Peltier/Capture", "OK"))
+
     except Exception:
         checks.append(("Peltier/Capture", "FAILED"))
 
+    # Rodeostat
     try:
         RodeostatSimulator()
         checks.append(("Rodeostat", "OK"))
+
     except Exception:
         checks.append(("Rodeostat", "FAILED"))
 
+    # DPV Processing
     try:
         process_dpv
         classify_signal
         checks.append(("DPV Processing", "OK"))
+
     except Exception:
         checks.append(("DPV Processing", "FAILED"))
 
+    # Fusion
     try:
         fuse_results
         checks.append(("Fusion", "OK"))
+
     except Exception:
         checks.append(("Fusion", "FAILED"))
 
+    # Database
     try:
-        DatabaseLogger()
+        database = DatabaseLogger()
+        database.close()
         checks.append(("SQLite Database", "OK"))
+
     except Exception:
         checks.append(("SQLite Database", "FAILED"))
 
