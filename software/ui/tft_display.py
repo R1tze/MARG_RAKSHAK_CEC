@@ -1,31 +1,24 @@
 class TFTDisplay:
-    """
-    Software interface for the MARG RAKSHAK TFT display.
 
-    Hardware-specific drawing will be connected later.
-    """
+    def __init__(self):
+        pass
 
     def show_startup(self):
         print("MARG RAKSHAK")
-        print("System Starting...")
+        print("========================================")
+        print("HARDWARE PLATFORM : Raspberry Pi Zero 2 W")
+        print("HARDWARE MODE     : simulator")
+        print("========================================")
 
     def show_breath_status(self, status):
-        print(f"BREATH: {status}")
+        print(f"BREATH STATUS : {status}")
 
     def show_sample_status(self, status):
-        print(f"SAMPLE: {status}")
+        print(f"SAMPLE STATUS : {status}")
 
     def show_result(self, result):
         print()
         print("RESULT")
-        print("------")
+        print("----------------------------------------")
         print(result)
-
-
-if __name__ == "__main__":
-    display = TFTDisplay()
-
-    display.show_startup()
-    display.show_breath_status("VALID")
-    display.show_sample_status("READY")
-    display.show_result("PRESUMPTIVE POSITIVE")
+        print("========================================")

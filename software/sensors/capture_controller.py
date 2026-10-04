@@ -1,18 +1,25 @@
-from sensors.peltier import PeltierController
+from sensors.peltier import PeltierSimulator, PeltierReal
 from sensors.condensate import CondensateCollector
 
 
 class CaptureController:
-    """
-    Controls the simulated Peltier condenser
-    and condensate collection process.
-    """
 
-    def __init__(self, target_volume=50, peltier_power=70):
-        self.peltier = PeltierController()
+    def __init__(
+        self,
+        target_volume=50,
+        peltier_power=70,
+        mode="simulator"
+    ):
+
+        if mode == "real":
+            self.peltier = PeltierReal()
+        else:
+            self.peltier = PeltierSimulator()
+
         self.collector = CondensateCollector(
             target_volume=target_volume
         )
+
         self.peltier_power = peltier_power
 
     def start_capture(self):
@@ -33,25 +40,3 @@ class CaptureController:
             "peltier": self.peltier.status(),
             "condensate": self.collector.status()
         }
-
-
-if __name__ == "__main__":
-    capture = CaptureController()
-
-    print("MARG RAKSHAK - CAPTURE CONTROLLER")
-    print("---------------------------------")
-
-    capture.start_capture()
-    print("Capture started")
-
-    capture.add_condensate(20)
-    print(capture.status())
-
-    capture.add_condensate(30)
-    print(capture.status())
-
-    if capture.is_ready():
-        print("Condensate ready for electrochemical analysis")
-
-    capture.stop_capture()
-    print("Capture stopped")

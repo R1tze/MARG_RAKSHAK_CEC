@@ -1,9 +1,6 @@
-class PeltierController:
+class PeltierSimulator:
     """
-    Simulated Peltier cooling controller.
-
-    The real Raspberry Pi version will control
-    the Peltier through a MOSFET using PWM.
+    Simulated Peltier controller for PC development.
     """
 
     def __init__(self):
@@ -13,10 +10,12 @@ class PeltierController:
     def start(self, power=70):
         self.power = power
         self.enabled = True
+        print(f"Peltier: ON ({power}%)")
 
     def stop(self):
         self.power = 0
         self.enabled = False
+        print("Peltier: OFF")
 
     def status(self):
         return {
@@ -25,18 +24,44 @@ class PeltierController:
         }
 
 
-if __name__ == "__main__":
-    peltier = PeltierController()
+class PeltierReal:
+    """
+    Real Peltier controller for Raspberry Pi.
 
-    print("MARG RAKSHAK - PELTIER TEST")
-    print("---------------------------")
+    Uses GPIO PWM through gpiozero.
+    """
 
-    print("Starting Peltier...")
-    peltier.start(70)
+    def __init__(self, gpio_pin=18):
+        from gpiozero import PWMOutputDevice
 
-    print(peltier.status())
+        self.device = PWMOutputDevice(
+            gpio_pin,
+            frequency=1000
+        )
 
-    print("Stopping Peltier...")
-    peltier.stop()
+        self.power = 0
+        self.enabled = False
 
-    print(peltier.status())
+    def start(self, power=70):
+        power = max(0, min(100, power))
+
+        self.device.value = power / 100.0
+
+        self.power = power
+        self.enabled = power > 0
+
+        print(f"Peltier: ON ({power}%)")
+
+    def stop(self):
+        self.device.value = 0
+
+        self.power = 0
+        self.enabled = False
+
+        print("Peltier: OFF")
+
+    def status(self):
+        return {
+            "enabled": self.enabled,
+            "power": self.power
+        }

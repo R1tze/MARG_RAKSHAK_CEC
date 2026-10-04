@@ -1,24 +1,35 @@
 {
+    "hardware": {
+    "platform": "Raspberry Pi Zero 2 W",
+    "mode": "simulator"
+    },
+
     "breath_validation": {
         "co2_threshold_ppm": 1000,
         "airflow_threshold": 0.5
     },
+
     "dpv": {
         "lod": 0.05,
         "loq": 0.10
     },
+
     "condensate": {
         "target_volume_uL": 50
     },
+
     "peltier": {
         "default_power_percent": 70
     },
+
     "voc": {
-    "gas_resistance_threshold_ohms": 100000
+        "gas_resistance_threshold_ohms": 100000
     },
+
     "rodeostat": {
-        "potential_start": 0.0,
-        "potential_end": 0.5,
-        "points": 101
-    }
+    "potential_start": 0.0,
+    "potential_end": 0.5,
+    "points": 101,
+    "simulator_scenario": "positive"
+}
 }

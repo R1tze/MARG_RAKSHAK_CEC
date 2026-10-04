@@ -1,6 +1,6 @@
 from sensors.capture_controller import CaptureController
-from sensors.scd41 import SCD41Simulator
-from sensors.airflow import AirflowSimulator
+from sensors.scd41 import SCD41Simulator, SCD41Real
+from sensors.airflow import AirflowSimulator, AirflowReal
 from sensors.airflow_processing import pressure_to_airflow
 from sensors.sample_gate import is_valid_sample
 from sensors.bme688_array import BME688Array
@@ -9,7 +9,7 @@ from sensors.voc_processing import (
     calculate_voc_signal,
     calculate_voc_response
 )
-from sensors.sht40 import SHT40Simulator
+from sensors.sht40 import SHT40Simulator, SHT40Real
 
 from db.database import DatabaseLogger
 
@@ -18,48 +18,100 @@ from ui.tft_display import TFTDisplay
 
 from config_loader import load_config
 
-
 import numpy as np
 
 from dpv.processing import process_dpv
 from dpv.decision import classify_signal
-from dpv.rodeostat_interface import RodeostatSimulator
+from dpv.rodeostat_interface import RodeostatSimulator, RodeostatReal
 
 from fusion.fusion import fuse_results
+from sensors.ds18b20 import DS18B20Simulator, DS18B20Real
+from sensors.ds3231 import DS3231Simulator, DS3231Real
+from sensors.max17048 import MAX17048Simulator, MAX17048Real
+from ui.controls import ControlsSimulator, ControlsReal
 
 
 def main():
-    
+
     # Load configuration
     config = load_config()
 
-    # Sensors
-    co2_sensor = SCD41Simulator()
-    airflow_sensor = AirflowSimulator()
-    voc_sensor = BME688Array()
-    sht40_sensor = SHT40Simulator()
+    hardware_platform = config["hardware"]["platform"]
+    hardware_mode = config["hardware"]["mode"]
+    print("### HARDWARE CONFIG LOADED ###")
+    print("PLATFORM:", hardware_platform)
+    print("MODE:", hardware_mode)
 
-    # Capture system using configuration
+         # Sensors
+    if hardware_mode == "real":
+        co2_sensor = SCD41Real()
+    else:
+        co2_sensor = SCD41Simulator()
+
+    if hardware_mode == "real":
+        airflow_sensor = AirflowReal()
+    else:
+        airflow_sensor = AirflowSimulator()
+
+    voc_sensor = BME688Array(mode=hardware_mode)
+    if hardware_mode == "real":
+        sht40_sensor = SHT40Real()
+    else:
+        sht40_sensor = SHT40Simulator()
+            # DS18B20 temperature sensors
+    if hardware_mode == "real":
+        peltier_temp_sensor = DS18B20Real()
+        heatsink_temp_sensor = DS18B20Real()
+    else:
+        peltier_temp_sensor = DS18B20Simulator(sensor_id=1)
+        heatsink_temp_sensor = DS18B20Simulator(sensor_id=2)
+            # DS3231 real-time clock
+    if hardware_mode == "real":
+        rtc = DS3231Real()
+    else:
+        rtc = DS3231Simulator()
+            # MAX17048 battery fuel gauge
+    if hardware_mode == "real":
+        battery = MAX17048Real()
+    else:
+        battery = MAX17048Simulator()
+            # RGB LED, buzzer, and buttons
+    if hardware_mode == "real":
+        controls = ControlsReal()
+    else:
+        controls = ControlsSimulator()
+
+       # Capture system
     capture = CaptureController(
         target_volume=config["condensate"]["target_volume_uL"],
-        peltier_power=config["peltier"]["default_power_percent"]
+        peltier_power=config["peltier"]["default_power_percent"],
+        mode=hardware_mode
     )
 
-    # Rodeostat
-    rodeostat = RodeostatSimulator()
+        # Rodeostat
+    if hardware_mode == "real":
+        rodeostat = RodeostatReal()
+    else:
+        rodeostat = RodeostatSimulator(
+    scenario=config["rodeostat"]["simulator_scenario"]
+)
+
     rodeostat.connect()
 
     # Database
     database = DatabaseLogger()
 
     # Display
-    display = TFTDisplay()
-    display.show_startup()
-
     print("MARG RAKSHAK")
-    print("============")
+    print("========================================")
+    print(f"HARDWARE PLATFORM : {hardware_platform}")
+    print(f"HARDWARE MODE     : {hardware_mode}")
+    print("========================================")
     print("Sensor monitoring started")
     print()
+
+    display = TFTDisplay()
+    display.show_startup()
 
     for _ in range(10):
 
@@ -77,6 +129,7 @@ def main():
             co2_threshold=config["breath_validation"]["co2_threshold_ppm"],
             airflow_threshold=config["breath_validation"]["airflow_threshold"]
         )
+        print("DEBUG valid_sample:", valid_sample)
 
         # BME688 array
         voc_array = voc_sensor.read()
@@ -88,10 +141,11 @@ def main():
         voc_features_2 = extract_voc_features(
             voc_array["sensor_2"]
         )
+
         voc_response = calculate_voc_response(
-    voc_features_1,
-    voc_features_2
-)
+            voc_features_1,
+            voc_features_2
+        )
 
         # SHT40
         sht40_data = sht40_sensor.read()
@@ -160,13 +214,8 @@ def main():
                         dpv_result["peak_current"]
                     )
 
-                    peak_current = dpv_result["peak_current"][
-                        peak_index
-                    ]
-
-                    peak_potential = dpv_result["peak_potential"][
-                        peak_index
-                    ]
+                    peak_current = dpv_result["peak_current"][peak_index]
+                    peak_potential = dpv_result["peak_potential"][peak_index]
 
                     # DPV decision
                     decision = classify_signal(
@@ -175,20 +224,20 @@ def main():
                         loq=config["dpv"]["loq"]
                     )
 
-                    # Demo VOC support signal
-                    # Calculate VOC support from both BME688 sensors
+                    # VOC support signal
                     voc_signal = calculate_voc_signal(
-    voc_features_1,
-    voc_features_2,
-    gas_resistance_threshold=config["voc"]["gas_resistance_threshold_ohms"]
-)
+                        voc_features_1,
+                        voc_features_2,
+                        gas_resistance_threshold=
+                        config["voc"]["gas_resistance_threshold_ohms"]
+                    )
 
                     # Fuse DPV + VOC
                     final_result = fuse_results(
-    decision,
-    voc_signal,
-    sample_valid=valid_sample
-)
+                        decision,
+                        voc_signal,
+                        sample_valid=valid_sample
+                    )
 
                     # Display result
                     display.show_result(final_result)

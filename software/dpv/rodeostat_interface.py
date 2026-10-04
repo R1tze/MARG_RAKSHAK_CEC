@@ -1,23 +1,27 @@
 class RodeostatSimulator:
     """
     Simulated Rodeostat potentiostat for PC development.
-
-    Later this can be replaced with the real Rodeostat
-    hardware/library interface.
     """
 
-    def __init__(self):
+    def __init__(self, scenario="positive"):
         self.connected = False
+        self.scenario = scenario
 
     def connect(self):
         self.connected = True
         print("Rodeostat: CONNECTED")
+        print(f"DPV simulation scenario: {self.scenario.upper()}")
 
     def disconnect(self):
         self.connected = False
         print("Rodeostat: DISCONNECTED")
 
-    def run_dpv(self, potential_start=0.0, potential_end=0.5, points=101):
+    def run_dpv(
+        self,
+        potential_start=0.0,
+        potential_end=0.5,
+        points=101
+    ):
         if not self.connected:
             raise RuntimeError("Rodeostat is not connected")
 
@@ -29,31 +33,77 @@ class RodeostatSimulator:
             points
         )
 
-        # Simulated DPV response
+        if self.scenario == "positive":
+            peak_current = 0.15
+
+        elif self.scenario == "inconclusive":
+            peak_current = 0.07
+
+        elif self.scenario == "negative":
+            peak_current = 0.02
+
+        else:
+            raise ValueError(
+                "Unknown DPV scenario. "
+                "Use positive, inconclusive, or negative."
+            )
+
         current = (
             np.exp(
                 -((potential - 0.25) / 0.03) ** 2
-            ) * 0.15
+            ) * peak_current
         )
 
         return potential, current
 
 
-if __name__ == "__main__":
+class RodeostatReal:
+    """
+    Real IO Rodeo Rodeostat interface.
 
-    print("MARG RAKSHAK - RODEOSTAT TEST")
-    print("-----------------------------")
+    The exact API may depend on the installed
+    Rodeostat Python library and hardware version.
+    """
 
-    rodeostat = RodeostatSimulator()
+    def __init__(self):
+        self.connected = False
+        self.rodeostat = None
 
-    rodeostat.connect()
+    def connect(self):
+        try:
+            from rodeostat import Rodeostat
 
-    potential, current = rodeostat.run_dpv()
+            self.rodeostat = Rodeostat()
+            self.connected = True
 
-    print(f"Potential points: {len(potential)}")
-    print(f"Current points: {len(current)}")
+            print("Rodeostat: CONNECTED")
 
-    print(f"First potential: {potential[0]:.3f} V")
-    print(f"Last potential: {potential[-1]:.3f} V")
+        except ImportError:
+            raise RuntimeError(
+                "Rodeostat library is not installed. "
+                "Install the IO Rodeo Rodeostat library "
+                "on the Raspberry Pi."
+            )
 
-    rodeostat.disconnect()
+    def disconnect(self):
+        self.connected = False
+        self.rodeostat = None
+
+        print("Rodeostat: DISCONNECTED")
+
+    def run_dpv(
+        self,
+        potential_start=0.0,
+        potential_end=0.5,
+        points=101
+    ):
+        if not self.connected:
+            raise RuntimeError(
+                "Rodeostat is not connected"
+            )
+
+        raise NotImplementedError(
+            "Real Rodeostat DPV command must be "
+            "mapped to the installed IO Rodeo "
+            "Rodeostat library API."
+        )

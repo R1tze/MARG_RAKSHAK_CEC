@@ -3,10 +3,7 @@ import random
 
 class BME688Simulator:
     """
-    Simulated BME688 VOC sensor for PC development.
-
-    The real Raspberry Pi version will later read
-    gas resistance, temperature, humidity and pressure.
+    Simulated BME688 sensor for PC development.
     """
 
     def read(self):
@@ -18,17 +15,32 @@ class BME688Simulator:
         }
 
 
-if __name__ == "__main__":
-    sensor = BME688Simulator()
+class BME688Real:
+    """
+    Real BME688 sensor for Raspberry Pi.
 
-    print("MARG RAKSHAK - BME688 TEST")
-    print("--------------------------")
+    Uses the Bosch BME68x Python library.
+    """
 
-    for _ in range(5):
-        data = sensor.read()
+    def __init__(self, address=0x76):
+        import board
+        import busio
+        from bme680 import BME680
 
-        print(f"Temperature: {data['temperature']} °C")
-        print(f"Humidity: {data['humidity']} %")
-        print(f"Pressure: {data['pressure']} hPa")
-        print(f"Gas resistance: {data['gas_resistance']} Ω")
-        print("-" * 30)
+        self.sensor = BME680(
+            i2c_addr=address,
+            i2c_device=busio.I2C(board.SCL, board.SDA)
+        )
+
+    def read(self):
+        if self.sensor.get_sensor_data():
+            data = self.sensor.data
+
+            return {
+                "temperature": data.temperature,
+                "humidity": data.humidity,
+                "pressure": data.pressure,
+                "gas_resistance": data.gas_resistance
+            }
+
+        return None

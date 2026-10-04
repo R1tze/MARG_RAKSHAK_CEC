@@ -13,13 +13,39 @@ class SHT40Simulator:
         }
 
 
+class SHT40Real:
+    """
+    Real SHT40 temperature and humidity sensor
+    for Raspberry Pi using I2C.
+    """
+
+    def __init__(self):
+        import board
+        import busio
+        import adafruit_sht4x
+
+        i2c = busio.I2C(board.SCL, board.SDA)
+
+        self.sensor = adafruit_sht4x.SHT4x(i2c)
+
+    def read(self):
+        temperature, humidity = self.sensor.measurements
+
+        return {
+            "temperature": temperature,
+            "humidity": humidity
+        }
+
+
 if __name__ == "__main__":
+
     sensor = SHT40Simulator()
 
     print("MARG RAKSHAK - SHT40 TEST")
     print("-------------------------")
 
     for _ in range(5):
+
         data = sensor.read()
 
         print(f"Temperature: {data['temperature']} °C")
