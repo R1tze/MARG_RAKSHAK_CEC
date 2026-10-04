@@ -18,6 +18,7 @@ from ui.tft_display import TFTDisplay
 
 from config_loader import load_config
 
+
 import numpy as np
 
 from dpv.processing import process_dpv
@@ -28,7 +29,7 @@ from fusion.fusion import fuse_results
 
 
 def main():
-
+    
     # Load configuration
     config = load_config()
 

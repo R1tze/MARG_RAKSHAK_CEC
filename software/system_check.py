@@ -14,6 +14,11 @@ from db.database import DatabaseLogger
 
 def main():
 
+    print()
+    print("Running system check...")
+    
+    print()
+
     print("MARG RAKSHAK - SYSTEM CHECK")
     print("============================")
 
