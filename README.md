@@ -1,5 +1,6 @@
 # MARG RAKSHAK
 ### Breath-Based Drug Screening — Proof-of-Concept Prototype
+![MARG RAKSHAK System Architecture](docs/marg-rakshak-architecture.png)
 
 > **MARG RAKSHAK** is a portable, non-invasive breath-analysis proof-of-concept designed to demonstrate rapid field screening through breath-sample validation, condensate collection, electrochemical sensing, VOC sensing, signal processing, and multi-sensor decision fusion.
 
