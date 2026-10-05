@@ -190,7 +190,7 @@ The proof-of-concept simulator currently demonstrates three signal classes:
 |---:|---|
 | 0.020 | NEGATIVE |
 | 0.070 | INCONCLUSIVE |
-| 0.150 | PRESUMPTIVE POSITIVE |
+| 0.150 | POSITIVE |
 
 These values are **software demonstration thresholds**, not forensic concentration limits.
 
