@@ -88,8 +88,8 @@ A positive result is intended as a **screening indication only** and should be f
                          │
              ┌───────────┼───────────┐
              ▼           ▼           ▼
-          NEGATIVE  INCONCLUSIVE  PRESUMPTIVE
-                                  POSITIVE
+          NEGATIVE  INCONCLUSIVE  POSITIVE
+                                  
                          │
                          ▼
                 Display + Database
