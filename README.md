@@ -39,7 +39,7 @@ The resulting output is categorized as:
 
 - **NEGATIVE**
 - **INCONCLUSIVE**
-- **PRESUMPTIVE POSITIVE**
+- **POSITIVE**
 
 A positive result is intended as a **screening indication only** and should be followed by appropriate confirmatory laboratory testing.
 
