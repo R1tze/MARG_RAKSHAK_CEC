@@ -1,44 +1,29 @@
-Research and References
-Breath capture (why aerosol and condensate work)
-THC in Breath Aerosols Collected with an Impaction Filter Device Before and After Cannabis Inhalation (pilot study), NCBI/PMC
-https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10201171/
-Supports: THC travels in breath as aerosol, not vapour, which is why we condense the breath.
+## Research & References
 
+- **THC in Breath Aerosols – NCBI/PMC** — [Link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10201171/) 
+— Supports investigation of **THC detection in exhaled-breath aerosols**.
 
-Cannabinoids Detected in Exhaled Breath Condensate After Cannabis Use, NCBI/PMC
-https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11264354/
-Supports: condensing breath into liquid recovers THC and other cannabinoids.
+- **Cannabinoids in Exhaled Breath Condensate – NCBI/PMC** — [Link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11264354/)
+— Supports **breath condensation for cannabinoid recovery**.
 
+- **THC Detection in Exhaled Breath – Forensic Toxicology** — [Link](https://link.springer.com/article/10.1007/s11419-016-0333-x)
+— Supports the **feasibility of THC detection in exhaled breath**.
 
-Detection of Δ9-Tetrahydrocannabinol in Exhaled Breath After Cannabis Smoking and Comparison with Oral Fluid, Forensic Toxicology (Springer, 2016)
-https://link.springer.com/article/10.1007/s11419-016-0333-x
-Supports: THC is measurable in breath after smoking.
+- **Electrochemical THC Detection Review** — [Link](https://jcannabisresearch.biomedcentral.com/articles/10.1186/s42238-022-00122-3)
+— Supports **electrochemical sensing approaches for THC detection**.
 
-Electrochemical detection (DPV on carbon electrodes)
-Recent Advances in Electrochemical Sensor Technologies for THC Detection: A Narrative Review, Journal of Cannabis Research (2022)
-https://jcannabisresearch.biomedcentral.com/articles/10.1186/s42238-022-00122-3
-Supports: electrochemical sensing of THC.
+- **Ott et al. – Fentanyl Detection Using SPCE** — [DOI](https://doi.org/10.1016/j.jelechem.2020.114425) 
+— Supports **SPCE-based voltammetric fentanyl detection**.
 
+- **Jordan & Hart – Morphine Voltammetry** — [Link](https://pubs.rsc.org/en/content/articlelanding/1991/an/an9911600991) 
+— Supports the **electrochemical basis for morphine detection**.
 
-Ott, C.E. et al. Electrochemical Detection of Fentanyl with Screen-Printed Carbon Electrodes Using Square-Wave Adsorptive Stripping Voltammetry for Forensic Applications, Journal of Electroanalytical Chemistry, 873, 114425 (2020)
-https://doi.org/10.1016/j.jelechem.2020.114425
-Supports: fentanyl peaks near 0.75 V and 0.88 V on SPCE, plus interference testing.
-Jordan, P.H. and Hart, J.P. Voltammetric Behaviour of Morphine at a Glassy Carbon Electrode, Analyst, 116, 991–996 (1991)
-https://pubs.rsc.org/en/content/articlelanding/1991/an/an9911600991
-Supports: the morphine oxidation mechanism behind our two-peak opioid signature.
+- **Karlovits et al. – Open-Source Potentiostat** — [PDF](https://bioresources.cnr.ncsu.edu/wp-content/uploads/2021/04/BioRes_16_2_3916_Karlovits_KTR_Cyclic_Voltammetry_Paper_Printed_Electrode_Potentiostat_18442.pdf) 
+— Supports **open-source potentiostat and SPCE measurements**.
 
+- **Rodeostat – Open-Source Potentiostat** — [OSHWA](https://certification.oshwa.org/us002129.html) 
+— Supports the **open-hardware potentiostat platform used in our prototype**.
 
-Open-source hardware (potentiostat)
-Karlovits, I. et al. Comparison of Cyclic Voltammetry Measurements of Paper-Based Screen-Printed Electrodes via Proprietary and Open-Source Potentiostats, BioResources, 16(2), 3916–3933 (2021)
-https://bioresources.cnr.ncsu.edu/wp-content/uploads/2021/04/BioRes_16_2_3916_Karlovits_KTR_Cyclic_Voltammetry_Paper_Printed_Electrode_Potentiostat_18442.pdf
-Supports: open-source potentiostat with screen-printed electrodes is scientifically valid.
+- **Setiawan & Lelono – Electronic Nose** — [Link](https://etd.repository.ugm.ac.id/penelitian/detail/150890) 
+— Supports **VOC-array pattern sensing for electronic-nose classification**.
 
-
-Rodeostat Open-Source Potentiostat, IO Rodeo (OSHWA certified, UID US002129)
-https://certification.oshwa.org/us002129.html
-Supports: open hardware documentation, and the Python library we run on the Raspberry Pi.
-
-VOC array (corroborating channel)
-Setiawan, D. and Lelono, D. Design of Electronic Nose to Discriminate Mouth Smell of Smokers and Non-Smokers, Universitas Gadjah Mada
-https://etd.repository.ugm.ac.id/penelitian/detail/150890
-Supports: a metal-oxide sensor array with PCA separated smokers from non-smokers at 92.5% accuracy. This is someone else's result, not ours.
